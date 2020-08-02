@@ -1,0 +1,23 @@
+sudo: required
+
+services:
+  - docker
+
+before_install:
+  - docker build -t psinalberth/multi-docker-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true psinalberth/multi-docker-test npm test -- --coverage
+
+after_success:
+  - docker build -t psinalberth/multi-client ./client
+  - docker build -t psinalberth/multi-nginx ./nginx
+  - docker build -t psinalberth/multi-server ./server
+  - docker build -t psinalberth/multi-worker ./worker
+
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+
+  - docker push psinalberth/multi-client
+  - docker push psinalberth/multi-nginx
+  - docker push psinalberth/multi-server
+  - docker push psinalberth/multi-worker
