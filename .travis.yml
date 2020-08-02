@@ -7,7 +7,7 @@ before_install:
   - docker build -t psinalberth/multi-docker-test -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run -e CI=true psinalberth/multi-docker-test npm test -- --coverage
+  - docker run -e CI=true psinalberth/multi-docker-test npm run test -- --coverage
 
 after_success:
   - docker build -t psinalberth/multi-client ./client
